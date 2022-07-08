@@ -43,6 +43,17 @@ Build Dockerfile into a docker image to deploy to the cloud.
 | Method | URL | Description |
 | ------ | --- | ----------- |
 | `GET` | `/api/v1/import/status/{process_id}` | [Import Status](#Import-Status)  |
+| `POST` | `/api/v1/import/arcgis_service` | [ArcGIS Service](#ArcGIS-Service)  |
+| `POST` | `/api/v1/import/geographic_data_from_geographic_file` | [Geographic Data From Geographic File](#Geographic-Data-From-Geographic-File)  |
+| `POST` | `/api/v1/import/geographic_data_from_excel` | [Geographic Data From Excel](#Geographic-Data-From-Excel)  |
+| `POST` | `/api/v1/import/point_data_from_excel` | [Point Data From Excel](#Point-Data-From-Excel)  |
+| `POST` | `/api/v1/import/geographic_data_from_json_file` | [Geographic Data From Json File](#Geographic-Data-From-Json-File)  |
+| `POST` | `/api/v1/import/point_data_from_json_file` | [Point Data From Json File ](#Point-Data-From-Json-File)  |
+| `POST` | `/api/v1/import/geographic_data_from_json_url` | [Geographic Data From Json URL](#Geographic-Data-From-Json-Url)  |
+| `POST` | `/api/v1/import/point_data_from_json_url` | [Point Data From Json URL](#Point-Data-From-Json-Url)  |
+| `POST` | `/api/v1/import/geographic_data_from_json_string` | [Geographic Data From Json String](#Geographic-Data-From-Json-String)  |
+| `POST` | `/api/v1/import/point_data_from_json_string` | [Point Data From Json String](#Point-Data-From-Json-String)  |
+| `POST` | `/api/v1/import/geojson_from_json` | [Geojson From URL](#Geojson-From-Url)  |
 
 
 ## Endpoint Description's
@@ -83,3 +94,225 @@ status of an import, you can call this endpoint with the process_id.
 }
 ```
 
+## ArcGIS Service
+
+### Description
+Import data from any `FeatureServer` or `MapServer` that allows for geojson as an output.
+
+Example: Download a point dataset of Tennesse State Parks.
+
+### Example Input
+```json
+{
+    "url": "https://services5.arcgis.com/bPacKTm9cauMXVfn/ArcGIS/rest/services/TN_State_Parks_Points/FeatureServer/0",
+    "database": "data"
+}
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
+
+## Geographic Data From Geographic File
+
+### Description
+
+
+Example: 
+
+### Example Input
+```json
+
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
+
+## Geographic Data From Excel
+
+### Description
+
+
+Example: 
+
+### Example Input
+```json
+
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
+
+## Point Data From Excel
+
+### Description
+
+
+Example: 
+
+### Example Input
+```json
+
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
+
+## Geographic Data From Json File
+
+### Description
+
+
+Example: 
+
+### Example Input
+```json
+
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
+
+## Point Data From Json File
+
+### Description
+
+
+Example: 
+
+### Example Input
+```json
+
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
+
+## Geographic Data From Json URL
+
+### Description
+
+
+Example: 
+
+### Example Input
+```json
+
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
+
+## Point Data From Json URL
+
+### Description
+
+
+Example: 
+
+### Example Input
+```json
+
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
+
+## Geographic Data From Json String
+
+### Description
+
+
+Example: 
+
+### Example Input
+```json
+
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
+
+## Point Data From Json String
+
+### Description
+
+
+Example: 
+
+### Example Input
+```json
+
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
+
+## Geojson From URL
+
+### Description
+
+
+Example: 
+
+### Example Input
+```json
+
+```
+
+### Example Output
+```json
+{
+  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
+  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
+}
+```
