@@ -126,7 +126,10 @@ Example:
 
 ### Example Input
 ```json
-
+{
+    "database": "data",
+    "files": "FILES IN MULTI PART FORM"
+}
 ```
 
 ### Example Output
