@@ -18,3 +18,8 @@ class ArcgisModel(BaseModel):
     database: str = Field(
         default=None, title="Name of the database the table belongs to."
     )
+
+class GeographicFileModel(BaseModel):
+    database: str = Field(
+        default=None, title="Name of the database the table belongs to."
+    )

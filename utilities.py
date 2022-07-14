@@ -25,9 +25,9 @@ def get_new_process_id() -> str:
 
     return str(uuid.uuid4())
 
-async def get_arcgis_data(url: str, new_table_id: str, process_id: str, database: str,token: str=None):
+async def get_arcgis_data(url: str, new_table_id: str, process_id: str, database: str, token: str=None):
     """
-    Method get arcgis data
+    Method get arcgis data from a given url and load it into a database.
     """
 
     start = datetime.datetime.now()
@@ -119,7 +119,40 @@ async def get_arcgis_data(url: str, new_table_id: str, process_id: str, database
         imports.import_processes[process_id]['error'] = str(error)
         imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
         imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
-    
+
+
+async def upload_geographic_file(file_path: str, new_table_id: str, process_id: str, database: str):
+    """
+    Method to upload data from geographic file.
+
+    """
+
+    start = datetime.datetime.now()
+
+    try:
+        load_geographic_data_to_server(
+            table_id=new_table_id,
+            file_path=file_path,
+            database=database
+        )
+        media_directory = os.listdir(f"{os.getcwd()}/media/")
+        for file in media_directory:
+            if new_table_id in file:
+                os.remove(f"{os.getcwd()}/media/{file}")  
+        imports.import_processes[process_id]['status'] = "SUCCESS"
+        imports.import_processes[process_id]['new_table_id'] = new_table_id
+        imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
+        imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
+    except Exception as error:
+        media_directory = os.listdir(f"{os.getcwd()}/media/")
+        for file in media_directory:
+            if new_table_id in file:
+                os.remove(f"{os.getcwd()}/media/{file}")  
+        imports.import_processes[process_id]['status'] = "FAILURE"
+        imports.import_processes[process_id]['error'] = str(error)
+        imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
+        imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
+
 def load_geographic_data_to_server(table_id: str, file_path: str, database: object):
 
     db = config.DATABASES[database]
