@@ -1,0 +1,459 @@
+{
+	"info": {
+		"_postman_id": "f72e5cc8-d27e-464e-af55-fa18ae7d67c9",
+		"name": "FastImporter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Arcgis Service",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"https://services5.arcgis.com/bPacKTm9cauMXVfn/ArcGIS/rest/services/TN_State_Parks_Points/FeatureServer/0\",\n    \"database\": \"data\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/import/arcgis_service/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"import",
+						"arcgis_service",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Geographic Data From Geographic File",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "database",
+							"value": "data",
+							"type": "default"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/home/michael/Documents/geo_data/states.geojson"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/import/geographic_data_from_geographic_file/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"import",
+						"geographic_data_from_geographic_file",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Geographic Data From CSV",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "database",
+							"value": "data",
+							"type": "default"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/home/michael/Documents/apps/python/FastImporter/data/state_data.csv"
+						},
+						{
+							"key": "map",
+							"value": "states",
+							"type": "default"
+						},
+						{
+							"key": "map_column",
+							"value": "state_abbr",
+							"type": "default"
+						},
+						{
+							"key": "map_columns",
+							"value": "[\"state_abbr\"]",
+							"type": "default"
+						},
+						{
+							"key": "table_column",
+							"value": "state_abbr",
+							"type": "default"
+						},
+						{
+							"key": "table_columns",
+							"value": "[\"state_abbr\",\"Number of Rest Stops\"]",
+							"type": "default"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/import/geographic_data_from_csv/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"import",
+						"geographic_data_from_csv",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Point Data From CSV",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "database",
+							"value": "data",
+							"type": "default"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/home/michael/Documents/apps/python/FastImporter/data/us-state-capitals.csv"
+						},
+						{
+							"key": "longitude",
+							"value": "longitude",
+							"type": "default"
+						},
+						{
+							"key": "latitude",
+							"value": "latitude",
+							"type": "default"
+						},
+						{
+							"key": "table_columns",
+							"value": "[\"name\",\"description\",\"latitude\",\"longitude\"]",
+							"type": "default"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/import/point_data_from_csv/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"import",
+						"point_data_from_csv",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Geographic Data From JSON File",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "database",
+							"value": "data",
+							"type": "default"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/home/michael/Documents/apps/python/FastImporter/data/states.json"
+						},
+						{
+							"key": "map_column",
+							"value": "state_abbr",
+							"type": "default"
+						},
+						{
+							"key": "table_column",
+							"value": "code",
+							"type": "default"
+						},
+						{
+							"key": "table_columns",
+							"value": "[\"state\",\"slug\",\"code\",\"nickname\"]",
+							"type": "default"
+						},
+						{
+							"key": "map",
+							"value": "states",
+							"type": "default"
+						},
+						{
+							"key": "map_columns",
+							"value": "[\"state_abbr\"]",
+							"type": "default"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/import/geographic_data_from_json_file/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"import",
+						"geographic_data_from_json_file",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Point Data From JSON File",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "database",
+							"value": "data",
+							"type": "default"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/home/michael/Documents/apps/python/FastImporter/data/cities.json"
+						},
+						{
+							"key": "longitude",
+							"value": "longitude",
+							"type": "default"
+						},
+						{
+							"key": "latitude",
+							"value": "latitude",
+							"type": "default"
+						},
+						{
+							"key": "table_columns",
+							"value": "[\"id\",\"name\",\"latitude\",\"longitude\",\"state_id\",\"state_code\",\"state_name\",\"country_id\",\"country_code\",\"country_name\",\"wikiDataId\"]",
+							"type": "default"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/import/point_data_from_json_file/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"import",
+						"point_data_from_json_file",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Geographic Data From JSON URL",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"database\": \"data\",\n    \"map_column\": \"state_abbr\",\n    \"table_column\": \"code\",\n    \"table_columns\": [\n        \"state\",\n        \"slug\",\n        \"code\",\n        \"nickname\"\n    ],\n    \"map\": \"states\",\n    \"map_columns\": [\n        \"state_abbr\"\n    ],\n    \"url\": \"https://raw.githubusercontent.com/CivilServiceUSA/us-states/master/data/states.json\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/import/geographic_data_from_json_url/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"import",
+						"geographic_data_from_json_url",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Point Data From JSON URL",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"database\": \"data\",\n    \"longitude\": \"longitude\",\n    \"latitude\": \"latitude\",\n    \"table_columns\": [\n        \"id\",\n        \"name\",\n        \"latitude\",\n        \"longitude\",\n        \"state_id\",\n        \"state_code\",\n        \"state_name\",\n        \"country_id\",\n        \"country_code\",\n        \"country_name\",\n        \"wikiDataId\"\n    ],\n    \"url\": \"https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/states.json\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/import/point_data_from_json_url/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"import",
+						"point_data_from_json_url",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Geojson From URL",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"database\": \"data\",\n    \"url\": \"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/import/geojson_from_url/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"import",
+						"geojson_from_url",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

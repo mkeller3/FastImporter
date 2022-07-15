@@ -120,7 +120,7 @@ Example: Download a point dataset of Tennesse State Parks.
 ### Description
 Import geographic data from a file/files.
 
-Example: Import geojson from file
+Example: Import geojson from [file](/data/states.geojson).
 
 ### Example Input
 ```json
@@ -141,7 +141,7 @@ Example: Import geojson from file
 ## Geographic Data From CSV
 
 ### Description
-Import a csv file and join to a map already within the database based off a column.
+Import a csv [file](/data/state_data.csv) and join to a map already within the database based off a column.
 
 Example: Uploading a csv with two columns `state_abbr` and `Number of Rest Stops`
 and joining to the `states` map based off of the `state_abbr` column.
@@ -172,7 +172,7 @@ and joining to the `states` map based off of the `state_abbr` column.
 ### Description
 Import a csv file with latitude and longitude columns into database.
 
-Example: A csv file with latitude and longitude columns for US Capitals.
+Example: A csv [file](/data/us-states-capitals.csv) with latitude and longitude columns for US Capitals.
 
 ### Example Input
 ```json
@@ -198,7 +198,7 @@ Example: A csv file with latitude and longitude columns for US Capitals.
 ### Description
 Import json from a file and join to a map already within the database based off a column.
 
-Example: 
+Example: Import state date from a json [file](/data/states.json).
 
 ### Example Input
 ```json
@@ -226,7 +226,7 @@ Example:
 ### Description
 Import point data from a Json file with latitude and longitude columns.
 
-Example: A json file that contains cities for the entire world.
+Example: A json [file](/data/cities.json) that contains cities for the entire world.
 
 ### Example Input
 ```json
