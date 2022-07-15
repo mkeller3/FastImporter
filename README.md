@@ -145,7 +145,8 @@ Example: Import geojson from file
 ### Description
 Import a csv file and join to a map already within the database based off a column.
 
-Example: 
+Example: Uploading a csv with two columns `state_abbr` and `Number of Rest Stops`
+and joining to the `states` map based off of the `state_abbr` column.
 
 ### Example Input
 ```json
