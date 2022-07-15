@@ -270,7 +270,14 @@ Example:
 
 ### Example Input
 ```json
-
+{
+  "url": "https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/states.json",
+  "database": "data",
+  "longitude": "longitude",
+  "latitude": "latitude",
+  "table_columns": ["id","name","latitude","longitude","state_code","country_id","country_code","country_name","type"],
+  "files": "FILES IN MULTI PART FORM"
+}
 ```
 
 ### Example Output

@@ -19,7 +19,11 @@ class ArcgisModel(BaseModel):
         default=None, title="Name of the database the table belongs to."
     )
 
-class GeographicFileModel(BaseModel):
+class PointJsonUrl(BaseModel):
     database: str = Field(
         default=None, title="Name of the database the table belongs to."
     )
+    latitude: str
+    longitude: str
+    table_columns: list
+    url: str

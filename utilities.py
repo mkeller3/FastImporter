@@ -97,6 +97,12 @@ async def upload_csv_to_db_with_latitude_and_longitude(file_path: str, new_table
 
         await con.fetch(update_geom_sql)
 
+        delete_bad_geom_sql = f"""
+            DELETE FROM "{new_table_id}" WHERE geom IS NULL;
+        """
+
+        await con.fetch(delete_bad_geom_sql)
+
 async def get_arcgis_data(url: str, new_table_id: str, process_id: str, database: str, token: str=None):
     """
     Method get arcgis data from a given url and load it into a database.
