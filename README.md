@@ -10,7 +10,7 @@ FastImporter is a [PostGIS](https://github.com/postgis/postgis) geospatial api t
 
 ## Requirements
 
-FastImporter requires PostGIS >= 2.4.0.
+FastImporter requires PostGIS >= 2.4.0 and ogr2ogr.
 
 ## Configuration
 
@@ -172,13 +172,19 @@ and joining to the `states` map based off of the `state_abbr` column.
 ## Point Data From CSV
 
 ### Description
+Import a csv file with latitude and longitude columns into database.
 
-
-Example: 
+Example: A csv file with latitude and longitude columns for US Capitals.
 
 ### Example Input
 ```json
-
+{
+  "database": "data",
+  "longitude": "longitude",
+  "latitude": "latitude",
+  "table_columns": ["name","description","latitude","longitude"],
+  "files": "FILES IN MULTI PART FORM"
+}
 ```
 
 ### Example Output
