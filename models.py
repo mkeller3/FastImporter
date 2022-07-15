@@ -27,3 +27,20 @@ class PointJsonUrl(BaseModel):
     longitude: str
     table_columns: list
     url: str
+
+class GeographicJsonUrl(BaseModel):
+    database: str = Field(
+        default=None, title="Name of the database the table belongs to."
+    )
+    map: str
+    map_column: str
+    map_columns: list
+    table_columns: list
+    table_column: str
+    url: str
+
+class GeojsonUrl(BaseModel):
+    database: str = Field(
+        default=None, title="Name of the database the table belongs to."
+    )
+    url: str

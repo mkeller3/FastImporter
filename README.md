@@ -51,9 +51,7 @@ Build Dockerfile into a docker image to deploy to the cloud.
 | `POST` | `/api/v1/import/point_data_from_json_file` | [Point Data From Json File ](#Point-Data-From-Json-File)  |
 | `POST` | `/api/v1/import/geographic_data_from_json_url` | [Geographic Data From Json URL](#Geographic-Data-From-Json-Url)  |
 | `POST` | `/api/v1/import/point_data_from_json_url` | [Point Data From Json URL](#Point-Data-From-Json-Url)  |
-| `POST` | `/api/v1/import/geographic_data_from_json_string` | [Geographic Data From Json String](#Geographic-Data-From-Json-String)  |
-| `POST` | `/api/v1/import/point_data_from_json_string` | [Point Data From Json String](#Point-Data-From-Json-String)  |
-| `POST` | `/api/v1/import/geojson_from_json` | [Geojson From URL](#Geojson-From-Url)  |
+| `POST` | `/api/v1/import/geojson_from_url` | [Geojson From URL](#Geojson-From-Url)  |
 
 
 ## Endpoint Description's
@@ -198,13 +196,21 @@ Example: A csv file with latitude and longitude columns for US Capitals.
 ## Geographic Data From Json File
 
 ### Description
-
+Import json from a file and join to a map already within the database based off a column.
 
 Example: 
 
 ### Example Input
 ```json
-
+{
+  "database": "data",
+  "map": "states",
+  "map_column": "state_abbr",
+  "map_columns": ["state_abbr"],
+  "table_column": "code",
+  "table_columns": ["state","slug","code","nickname"],
+  "files": "FILES IN MULTI PART FORM"
+}
 ```
 
 ### Example Output
@@ -244,13 +250,28 @@ Example: A json file that contains cities for the entire world.
 ## Geographic Data From Json URL
 
 ### Description
+Import json from a url and join to a map already within the database based off a column.
 
-
-Example: 
+Example: Import state information from a gitlab url
 
 ### Example Input
 ```json
-
+{
+    "database": "data",
+    "map_column": "state_abbr",
+    "table_column": "code",
+    "table_columns": [
+        "state",
+        "slug",
+        "code",
+        "nickname"
+    ],
+    "map": "states",
+    "map_columns": [
+        "state_abbr"
+    ],
+    "url": "https://raw.githubusercontent.com/CivilServiceUSA/us-states/master/data/states.json"
+}
 ```
 
 ### Example Output
@@ -264,9 +285,9 @@ Example:
 ## Point Data From Json URL
 
 ### Description
+Import json data from a url with latitude and longitude columns into database.
 
-
-Example: 
+Example: Import state centroids from a gitlab url
 
 ### Example Input
 ```json
@@ -288,56 +309,19 @@ Example:
 }
 ```
 
-## Geographic Data From Json String
-
-### Description
-
-
-Example: 
-
-### Example Input
-```json
-
-```
-
-### Example Output
-```json
-{
-  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
-  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
-}
-```
-
-## Point Data From Json String
-
-### Description
-
-
-Example: 
-
-### Example Input
-```json
-
-```
-
-### Example Output
-```json
-{
-  "process_id": "c8d7b8d8-3e82-4f93-b441-55a5f51c4171",
-  "url": "http://127.0.0.1:8000/api/v1/import/status/c8d7b8d8-3e82-4f93-b441-55a5f51c4171"
-}
-```
-
 ## Geojson From URL
 
 ### Description
+Import geojson from any url.
 
-
-Example: 
+Example: Input large earthquakes for the past month
 
 ### Example Input
 ```json
-
+{
+    "database": "data",
+    "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson"
+}
 ```
 
 ### Example Output
