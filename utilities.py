@@ -1,11 +1,14 @@
 import random
 import os
+import re
 import string
 import uuid
 import datetime
 import subprocess
 import json
 import aiohttp
+import pandas as pd
+from fastapi import FastAPI
 
 import config
 from routers import imports
@@ -24,6 +27,10 @@ def get_new_process_id() -> str:
     """
 
     return str(uuid.uuid4())
+
+def remove_bad_characters(string: str) -> str:
+    regex = re.compile('[^a-zA-Z0-9_]')
+    return regex.sub('_', string).lower()
 
 async def get_arcgis_data(url: str, new_table_id: str, process_id: str, database: str, token: str=None):
     """
@@ -120,7 +127,6 @@ async def get_arcgis_data(url: str, new_table_id: str, process_id: str, database
         imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
         imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
 
-
 async def upload_geographic_file(file_path: str, new_table_id: str, process_id: str, database: str):
     """
     Method to upload data from geographic file.
@@ -143,6 +149,91 @@ async def upload_geographic_file(file_path: str, new_table_id: str, process_id: 
         imports.import_processes[process_id]['new_table_id'] = new_table_id
         imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
         imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
+    except Exception as error:
+        media_directory = os.listdir(f"{os.getcwd()}/media/")
+        for file in media_directory:
+            if new_table_id in file:
+                os.remove(f"{os.getcwd()}/media/{file}")  
+        imports.import_processes[process_id]['status'] = "FAILURE"
+        imports.import_processes[process_id]['error'] = str(error)
+        imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
+        imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
+
+async def import_geographic_data_from_csv(file_path: str, new_table_id: str, process_id: str, database: str,
+    map: str, map_column: str, table_column: str, table_columns: list, map_columns: list, app: FastAPI):
+    """
+    Method to upload data from geographic data from a csv file.
+
+    """
+
+    start = datetime.datetime.now()
+
+    try:
+        pd.options.display.max_rows = 10
+
+        df = pd.read_csv(file_path)
+
+        columns = ""
+
+        formatted_table_columns = ""
+
+        formatted_map_columns = ""
+
+        for col in table_columns:
+            if col not in map_columns:
+                formatted_table_columns += f"a.{remove_bad_characters(col)},"
+        
+        for column in map_columns:
+            formatted_map_columns += f"b.{remove_bad_characters(column)},"
+
+        create_table_sql = f"CREATE TABLE {new_table_id}_temp ("
+
+        for name, dtype in df.dtypes.iteritems():
+            columns += f"{remove_bad_characters(name)},"
+            create_table_sql += f'"{remove_bad_characters(name)}"'
+            if dtype == "object" or dtype == "datetime64":
+                create_table_sql += " text,"
+            if dtype == "int64":
+                create_table_sql += " integer,"            
+            if dtype == "float64":
+                create_table_sql += " double precision,"
+
+        create_table_sql = create_table_sql[:-1]
+        columns = columns[:-1]
+        
+        create_table_sql += ");"
+
+        pool = app.state.databases[f'{database}_pool']
+
+        async with pool.acquire() as con:
+            await con.fetch(f"""DROP TABLE IF EXISTS "{new_table_id}_temp";""")
+
+            await con.fetch(create_table_sql)
+
+            insert_sql = f"""COPY {new_table_id}_temp({columns})
+            FROM '{file_path}'
+            DELIMITER ','
+            CSV HEADER;"""
+
+            await con.fetch(insert_sql)
+
+            join_sql = f"""CREATE TABLE "{new_table_id}" AS
+                SELECT {formatted_table_columns} {formatted_map_columns} geom
+                FROM "{new_table_id}_temp" as a
+                LEFT JOIN "{map}" as b
+                ON a."{table_column}" = b."{map_column}";
+            """
+
+            await con.fetch(join_sql)
+
+            media_directory = os.listdir(f"{os.getcwd()}/media/")
+            for file in media_directory:
+                if new_table_id in file:
+                    os.remove(f"{os.getcwd()}/media/{file}")  
+            imports.import_processes[process_id]['status'] = "SUCCESS"
+            imports.import_processes[process_id]['new_table_id'] = new_table_id
+            imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
+            imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
     except Exception as error:
         media_directory = os.listdir(f"{os.getcwd()}/media/")
         for file in media_directory:

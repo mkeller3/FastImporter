@@ -45,8 +45,8 @@ Build Dockerfile into a docker image to deploy to the cloud.
 | `GET` | `/api/v1/import/status/{process_id}` | [Import Status](#Import-Status)  |
 | `POST` | `/api/v1/import/arcgis_service` | [ArcGIS Service](#ArcGIS-Service)  |
 | `POST` | `/api/v1/import/geographic_data_from_geographic_file` | [Geographic Data From Geographic File](#Geographic-Data-From-Geographic-File)  |
-| `POST` | `/api/v1/import/geographic_data_from_excel` | [Geographic Data From Excel](#Geographic-Data-From-Excel)  |
-| `POST` | `/api/v1/import/point_data_from_excel` | [Point Data From Excel](#Point-Data-From-Excel)  |
+| `POST` | `/api/v1/import/geographic_data_from_csv` | [Geographic Data From CSV](#Geographic-Data-From-CSV)  |
+| `POST` | `/api/v1/import/point_data_from_csv` | [Point Data From CSV](#Point-Data-From-CSV)  |
 | `POST` | `/api/v1/import/geographic_data_from_json_file` | [Geographic Data From Json File](#Geographic-Data-From-Json-File)  |
 | `POST` | `/api/v1/import/point_data_from_json_file` | [Point Data From Json File ](#Point-Data-From-Json-File)  |
 | `POST` | `/api/v1/import/geographic_data_from_json_url` | [Geographic Data From Json URL](#Geographic-Data-From-Json-Url)  |
@@ -120,9 +120,9 @@ Example: Download a point dataset of Tennesse State Parks.
 ## Geographic Data From Geographic File
 
 ### Description
+Import geographic data from a file/files.
 
-
-Example: 
+Example: Import geojson from file
 
 ### Example Input
 ```json
@@ -140,16 +140,24 @@ Example:
 }
 ```
 
-## Geographic Data From Excel
+## Geographic Data From CSV
 
 ### Description
-
+Import a csv file and join to a map already within the database based off a column.
 
 Example: 
 
 ### Example Input
 ```json
-
+{
+  "database": "data",
+  "map": "states",
+  "map_column": "state_abbr",
+  "map_columns": ["state_abbr"],
+  "table_column": "state_abbr",
+  "table_columns": ["state_abbr","Number of Rest Stops"],
+  "files": "FILES IN MULTI PART FORM"
+}
 ```
 
 ### Example Output
@@ -160,7 +168,7 @@ Example:
 }
 ```
 
-## Point Data From Excel
+## Point Data From CSV
 
 ### Description
 
