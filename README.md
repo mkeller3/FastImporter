@@ -218,13 +218,19 @@ Example:
 ## Point Data From Json File
 
 ### Description
+Import point data from a Json file with latitude and longitude columns.
 
-
-Example: 
+Example: A json file that contains cities for the entire world.
 
 ### Example Input
 ```json
-
+{
+  "database": "data",
+  "longitude": "longitude",
+  "latitude": "latitude",
+  "table_columns": ["id","name","latitude","longitude","state_id","state_code","state_name","country_id","country_code","country_name","wikiDataId"],
+  "files": "FILES IN MULTI PART FORM"
+}
 ```
 
 ### Example Output

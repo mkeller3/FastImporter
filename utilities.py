@@ -32,6 +32,71 @@ def remove_bad_characters(string: str) -> str:
     regex = re.compile('[^a-zA-Z0-9_]')
     return regex.sub('_', string).lower()
 
+async def upload_csv_to_db_with_latitude_and_longitude(file_path: str, new_table_id: str, database: str,
+    latitude: str, longitude: str, table_columns: list, app: FastAPI):
+    """
+    Method to upload data from from a csv file with geographic data into db.
+
+    """
+
+    pd.options.display.max_rows = 10
+
+    df = pd.read_csv(file_path)
+
+    columns = ""
+
+    formatted_table_columns = ""
+
+    for col in table_columns:
+        formatted_table_columns += f"{remove_bad_characters(col)},"
+
+    formatted_table_columns = formatted_table_columns[:-1]
+
+    create_table_sql = f"CREATE TABLE {new_table_id} ("
+
+    for name, dtype in df.dtypes.iteritems():
+        columns += f"{remove_bad_characters(name)},"
+        create_table_sql += f'"{remove_bad_characters(name)}"'
+        if dtype == "object" or dtype == "datetime64":
+            create_table_sql += " text,"
+        if dtype == "int64":
+            create_table_sql += " integer,"            
+        if dtype == "float64":
+            create_table_sql += " double precision,"
+
+    create_table_sql = create_table_sql[:-1]
+
+    columns = columns[:-1]
+    
+    create_table_sql += ");"
+
+    pool = app.state.databases[f'{database}_pool']
+
+    async with pool.acquire() as con:
+        await con.fetch(f"""DROP TABLE IF EXISTS "{new_table_id}";""")
+
+        await con.fetch(create_table_sql)
+
+        insert_sql = f"""COPY {new_table_id}({columns})
+        FROM '{file_path}'
+        DELIMITER ','
+        CSV HEADER;"""
+
+        await con.fetch(insert_sql)
+
+        add_geom_sql = f"""
+            SELECT AddGeometryColumn ('public','{new_table_id}','geom',4326,'POINT',2);                
+        """
+
+        await con.fetch(add_geom_sql)
+
+        update_geom_sql = f"""
+            UPDATE "{new_table_id}" 
+            SET geom = ST_SetSRID(ST_MakePoint({longitude},{latitude}), 4326);
+        """
+
+        await con.fetch(update_geom_sql)
+
 async def get_arcgis_data(url: str, new_table_id: str, process_id: str, database: str, token: str=None):
     """
     Method get arcgis data from a given url and load it into a database.
@@ -254,72 +319,67 @@ async def import_point_data_from_csv(file_path: str, new_table_id: str, process_
     start = datetime.datetime.now()
 
     try:
-        pd.options.display.max_rows = 10
+        await upload_csv_to_db_with_latitude_and_longitude(
+            file_path=file_path,
+            new_table_id=new_table_id,
+            database=database,
+            latitude=latitude,
+            longitude=longitude,
+            table_columns=table_columns,
+            app=app
+        )
 
-        df = pd.read_csv(file_path)
+        media_directory = os.listdir(f"{os.getcwd()}/media/")
+        for file in media_directory:
+            if new_table_id in file:
+                os.remove(f"{os.getcwd()}/media/{file}")  
 
-        columns = ""
+        imports.import_processes[process_id]['status'] = "SUCCESS"
+        imports.import_processes[process_id]['new_table_id'] = new_table_id
+        imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
+        imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
+    except Exception as error:
+        media_directory = os.listdir(f"{os.getcwd()}/media/")
+        for file in media_directory:
+            if new_table_id in file:
+                os.remove(f"{os.getcwd()}/media/{file}")  
+        imports.import_processes[process_id]['status'] = "FAILURE"
+        imports.import_processes[process_id]['error'] = str(error)
+        imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
+        imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
 
-        formatted_table_columns = ""
+async def import_point_data_from_json_file(file_path: str, new_table_id: str, process_id: str, database: str,
+    latitude: str, longitude: str, table_columns: list, app: FastAPI):
+    """
+    Method to upload data from csv with lat lng columns.
 
-        for col in table_columns:
-            formatted_table_columns += f"{remove_bad_characters(col)},"
+    """
 
-        formatted_table_columns = formatted_table_columns[:-1]
+    start = datetime.datetime.now()
 
-        create_table_sql = f"CREATE TABLE {new_table_id} ("
-
-        for name, dtype in df.dtypes.iteritems():
-            columns += f"{remove_bad_characters(name)},"
-            create_table_sql += f'"{remove_bad_characters(name)}"'
-            if dtype == "object" or dtype == "datetime64":
-                create_table_sql += " text,"
-            if dtype == "int64":
-                create_table_sql += " integer,"            
-            if dtype == "float64":
-                create_table_sql += " double precision,"
-
-        create_table_sql = create_table_sql[:-1]
-
-        columns = columns[:-1]
+    try:
+        df = pd.read_json(file_path)
         
-        create_table_sql += ");"
+        df.to_csv(f"{os.getcwd()}/media/{new_table_id}.csv", index=False, sep=',', encoding="utf-8")
 
-        pool = app.state.databases[f'{database}_pool']
+        await upload_csv_to_db_with_latitude_and_longitude(
+            file_path=f"{os.getcwd()}/media/{new_table_id}.csv",
+            new_table_id=new_table_id,
+            database=database,
+            latitude=latitude,
+            longitude=longitude,
+            table_columns=table_columns,
+            app=app
+        )
 
-        async with pool.acquire() as con:
-            await con.fetch(f"""DROP TABLE IF EXISTS "{new_table_id}";""")
-
-            await con.fetch(create_table_sql)
-
-            insert_sql = f"""COPY {new_table_id}({columns})
-            FROM '{file_path}'
-            DELIMITER ','
-            CSV HEADER;"""
-
-            await con.fetch(insert_sql)
-
-            add_geom_sql = f"""
-                SELECT AddGeometryColumn ('public','{new_table_id}','geom',4326,'POINT',2);                
-            """
-
-            await con.fetch(add_geom_sql)
-
-            update_geom_sql = f"""
-                UPDATE "{new_table_id}" 
-                SET geom = ST_SetSRID(ST_MakePoint({longitude},{latitude}), 4326);
-            """
-
-            await con.fetch(update_geom_sql)
-
-            media_directory = os.listdir(f"{os.getcwd()}/media/")
-            for file in media_directory:
-                if new_table_id in file:
-                    os.remove(f"{os.getcwd()}/media/{file}")  
-            imports.import_processes[process_id]['status'] = "SUCCESS"
-            imports.import_processes[process_id]['new_table_id'] = new_table_id
-            imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
-            imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
+        media_directory = os.listdir(f"{os.getcwd()}/media/")
+        for file in media_directory:
+            if new_table_id in file:
+                os.remove(f"{os.getcwd()}/media/{file}")  
+        imports.import_processes[process_id]['status'] = "SUCCESS"
+        imports.import_processes[process_id]['new_table_id'] = new_table_id
+        imports.import_processes[process_id]['completion_time'] = datetime.datetime.now()
+        imports.import_processes[process_id]['run_time_in_seconds'] = datetime.datetime.now()-start
     except Exception as error:
         media_directory = os.listdir(f"{os.getcwd()}/media/")
         for file in media_directory:

@@ -107,7 +107,6 @@ async def import_geographic_data_from_csv(
         files: List[UploadFile] = File(...)
     ):
     new_table_id = utilities.get_new_table_id()
-    new_table_id = "sqsuexpcjsyrqmmbdtldmgwynthofglppmabylonxwkdybyejm"
 
     process_id = utilities.get_new_process_id()
 
@@ -166,7 +165,6 @@ async def import_point_data_from_csv(
         files: List[UploadFile] = File(...)
     ):
     new_table_id = utilities.get_new_table_id()
-    new_table_id = "sqsuexpcjsyrqmmbdtldmgwynthofglppmabylonxwkdybyejm"
 
     process_id = utilities.get_new_process_id()
 
@@ -197,6 +195,63 @@ async def import_point_data_from_csv(
 
     background_tasks.add_task(
         utilities.import_point_data_from_csv,
+        file_path=file_path,
+        new_table_id=new_table_id,
+        database=database,
+        latitude=latitude,
+        longitude=longitude,
+        table_columns=json.loads(table_columns[0]),
+        process_id=process_id,
+        app=request.app
+    )
+
+    return {
+        "process_id": process_id,
+        "url": process_url
+    }
+
+@router.post("/point_data_from_json_file/", tags=["import"], response_model=models.BaseResponseModel)
+async def import_point_data_from_json_file(
+        request: Request,
+        background_tasks: BackgroundTasks,
+        database: str = Form(...),
+        latitude: str = Form(...),
+        longitude: str = Form(...),
+        table_columns: List = Form(...),
+        files: List[UploadFile] = File(...)
+    ):
+    new_table_id = utilities.get_new_table_id()
+    new_table_id = "sqsuexpcjsyrqmmbdtldmgwynthofglppmabylonxwkdybyejm"
+
+    process_id = utilities.get_new_process_id()
+
+    process_url = str(request.base_url)
+
+    process_url += f"api/v1/import/status/{process_id}"
+
+    file_path = ""
+
+    for file in files:
+        try:
+            file_path = f"{os.getcwd()}/media/{new_table_id}_{file.filename}"
+            with open(file_path, 'wb') as f:
+                [f.write(chunk) for chunk in iter(lambda: file.file.read(1000), b'')]
+        except Exception:
+            media_directory = os.listdir(f"{os.getcwd()}/media/")
+            for file in media_directory:
+                if new_table_id in file:
+                    os.remove(f"{os.getcwd()}/media/{file}")  
+
+            return {"message": "There was an error uploading the file(s)"}
+        finally:
+            await file.close()
+
+    import_processes[process_id] = {
+        "status": "PENDING"
+    }
+
+    background_tasks.add_task(
+        utilities.import_point_data_from_json_file,
         file_path=file_path,
         new_table_id=new_table_id,
         database=database,
